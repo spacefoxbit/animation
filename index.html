@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How Document C is assembled — step animation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="scrolly" id="scrolly">
+    <div class="scrolly__sticky">
+      <main class="demo">
+    <header class="caption" aria-live="polite">
+      <p class="caption__step" id="caption-step">Step 1</p>
+      <h1 class="caption__title" id="caption-title">Two separate documents</h1>
+      <p class="caption__desc" id="caption-desc">Document A and Document B arrive as independent files, each marked into four segments.</p>
+    </header>
+
+    <div class="stage">
+      <svg class="stage__svg" width="560" height="700" viewBox="0 0 560 700"
+           role="img" aria-labelledby="svg-title svg-desc">
+        <title id="svg-title">How two documents are merged into Document C</title>
+        <desc id="svg-desc">Animated diagram: documents A and B are split into segments,
+          corresponding segments are linked and grouped, and the groups are fitted into
+          Document C.</desc>
+
+        <defs>
+          <!-- Arrowheads are switched on only after a connector has been drawn. -->
+          <marker id="head-link" viewBox="0 0 10 8" refX="9" refY="4"
+                  markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+            <path d="M0 0 L10 4 L0 8 Z" fill="#4a4f57"></path>
+          </marker>
+          <marker id="head-move" viewBox="0 0 10 8" refX="9" refY="4"
+                  markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+            <path d="M0 0 L10 4 L0 8 Z" fill="#1f2733"></path>
+          </marker>
+        </defs>
+
+        <!-- The whole scene can pan vertically per step (camera). -->
+        <g id="scene" class="scene">
+          <!-- Target document (behind everything else) -->
+          <g id="doc-c">
+            <rect id="doc-c-ghost" class="doc-c__ghost"
+                  x="112" y="318" width="336" height="308" rx="6"></rect>
+            <rect id="doc-c-fill" class="doc-c__fill"
+                  x="112" y="318" width="336" height="308" rx="6"></rect>
+            <text id="doc-c-label" class="doc-c__label" x="280" y="672">Document C</text>
+          </g>
+
+          <!-- Planning slots inside Document C (step 4) -->
+          <g id="slots"></g>
+
+          <!-- Connectors and arrows are generated in animation.js -->
+          <g id="links"></g>
+          <g id="arrows"></g>
+
+          <!-- Grouping outlines (step 3 / 4) -->
+          <g id="frames"></g>
+
+          <!-- The documents' segments -->
+          <g id="segments"></g>
+
+          <!-- Step 1: the intact document sheets, drawn above the segments -->
+          <g id="pages"></g>
+
+          <!-- Step 1: dotted cut marks where the sheets will split -->
+          <g id="cuts"></g>
+
+          <g id="labels">
+            <text id="label-a" class="doc-label" x="0" y="0"
+                  style="transform: translate(212px, 430px)">Document A</text>
+            <text id="label-b" class="doc-label" x="0" y="0"
+                  style="transform: translate(412px, 430px)">Document B</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+      <nav class="controls" aria-label="Animation controls">
+        <button class="controls__btn" id="btn-prev" type="button">&lsaquo; Prev</button>
+        <div class="controls__dots">
+          <button class="controls__dot" type="button" data-dot aria-label="Step 1"></button>
+          <button class="controls__dot" type="button" data-dot aria-label="Step 2"></button>
+          <button class="controls__dot" type="button" data-dot aria-label="Step 3"></button>
+          <button class="controls__dot" type="button" data-dot aria-label="Step 4"></button>
+          <button class="controls__dot" type="button" data-dot aria-label="Step 5"></button>
+        </div>
+        <span class="controls__hint" id="scroll-hint">Scroll to play &darr;</span>
+        <button class="controls__btn" id="btn-next" type="button">Next &rsaquo;</button>
+        <button class="controls__btn controls__btn--primary" id="btn-play" type="button"
+                aria-pressed="false">Play</button>
+      </nav>
+    </main>
+    </div>
+  </div>
+
+  <script src="animation.js"></script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+/* =========================================================
+   Document-merge animation
+   - All motion lives here (durations / easings / transitions).
+   - animation.js only decides *where* things go per step.
+   ========================================================= */
+
+:root {
+  --seg-a: #4a4f57;        /* Document A — dark gray */
+  --seg-b: #d5d8dc;        /* Document B — light gray */
+  --doc-c: #f7f4ec;        /* Document C — off-white */
+  --ink: #1f2733;
+  --muted: #5b6673;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  background: #f2f2f2;
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollytelling track: in widget mode it is exactly one viewport tall;
+   in scroll mode it is stretched so scrolling plays the five steps. */
+.scrolly {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+}
+
+body.mode-scroll .scrolly {
+  height: 520vh;
+  height: 520svh;
+}
+
+.scrolly__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 28px 24px;
+}
+
+.demo {
+  width: min(720px, 100%);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---------------- caption ---------------- */
+
+.caption {
+  flex: none;
+  max-width: 660px;
+  margin: 0 auto clamp(8px, 1.6vh, 18px);
+  text-align: center;
+}
+
+.caption__step {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #8a939e;
+}
+
+.caption__title {
+  margin: 0 0 8px;
+  font-size: clamp(22px, 2.8vw, 32px);
+  line-height: 1.15;
+  font-weight: 650;
+  letter-spacing: -.012em;
+}
+
+.caption__desc {
+  margin: 0;
+  min-height: 44px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.caption.is-anim .caption__step,
+.caption.is-anim .caption__title,
+.caption.is-anim .caption__desc {
+  animation: caption-in 420ms var(--ease) both;
+}
+
+.caption.is-anim .caption__desc { animation-delay: 60ms; }
+
+@keyframes caption-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------------- stage ---------------- */
+
+.stage {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.stage__svg {
+  display: block;
+  width: min(100%, 640px);
+  max-height: calc(100dvh - 250px);
+  height: auto;
+  overflow: visible;
+  font-family: var(--font);
+
+  /* Motion timings — read by animation.js so JS delays stay in sync. */
+  --dur-move: 850ms;
+  --dur-link: 650ms;
+  --dur-fade: 400ms;
+  --dur-frame: 500ms;
+  --dur-cut: 560ms;
+}
+
+/* Vertical camera: keeps the drawn content centred inside the stage box. */
+.scene { transform: translate(0px, 0px); }
+
+.stage__svg.is-ready .scene {
+  transition: transform var(--dur-move) var(--ease);
+}
+
+/* ---------------- document labels ---------------- */
+
+.doc-label,
+.doc-c__label {
+  font-size: 20px;
+  font-weight: 500;
+  text-anchor: middle;
+  fill: #2f3742;
+  user-select: none;
+}
+
+.doc-c__label { opacity: 0; }
+
+.stage__svg.is-ready .doc-label {
+  transition:
+    transform var(--dur-move) var(--ease),
+    opacity var(--dur-fade) linear;
+}
+
+.doc-label.is-off { opacity: 0; }
+
+.stage__svg.is-ready .doc-c__label {
+  transition: opacity var(--dur-fade) linear;
+}
+
+.doc-c__label.is-on { opacity: 1; }
+
+/* ---------------- segments ---------------- */
+
+.segment { transform: translate(0px, 0px); }
+
+.segment__box {
+  stroke: #222;
+  stroke-width: 2;
+  fill: #fff;
+}
+
+.segment--a .segment__box { fill: var(--seg-a); }
+.segment--b .segment__box { fill: var(--seg-b); }
+
+.stage__svg.is-ready .segment {
+  transition: transform var(--dur-move) var(--ease);
+}
+
+.stage__svg.is-ready .segment__box {
+  transition: stroke-opacity 320ms linear;
+}
+
+/* Step 1: the sheet is intact, so the quarter seams are hidden. */
+#segments.is-unsplit .segment__box { stroke-opacity: 0; }
+
+/* ---------------- step 1: document sheets + dotted cuts ---------------- */
+
+.page {
+  stroke: #222;
+  stroke-width: 2.5;
+  opacity: 0;
+}
+
+.page--a { fill: var(--seg-a); }
+.page--b { fill: var(--seg-b); }
+
+.stage__svg.is-ready .page { transition: opacity 420ms linear; }
+.page.is-on { opacity: 1; }
+
+.cut {
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1 7;
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+}
+
+.cut--a { stroke: rgba(255, 255, 255, .9); }
+.cut--b { stroke: rgba(31, 39, 51, .55); }
+
+.stage__svg.is-ready .cut { transition: opacity 300ms linear; }
+
+.stage__svg.is-ready .cut.is-wiping {
+  transition:
+    opacity 300ms linear,
+    clip-path var(--dur-cut) var(--ease);
+}
+
+.cut.is-on { opacity: 1; clip-path: inset(0 0 0 0); }
+
+/* ---------------- grouping outline ---------------- */
+
+.pair-frame {
+  fill: var(--ink);
+  fill-opacity: .04;
+  stroke: #6b7480;
+  stroke-width: 1.5;
+  stroke-dasharray: 7 5;
+  opacity: 0;
+}
+
+.stage__svg.is-ready .pair-frame {
+  transition:
+    transform var(--dur-move) var(--ease),
+    opacity var(--dur-frame) linear;
+}
+
+.pair-frame.is-on { opacity: 1; }
+
+/* ---------------- connectors (step 3) ---------------- */
+
+.link {
+  fill: none;
+  stroke: var(--seg-a);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+.link.is-on { opacity: 1; }
+.link.is-headed { marker-end: url(#head-link); }
+
+.stage__svg.is-ready .link {
+  transition:
+    stroke-dashoffset var(--dur-link) var(--ease),
+    opacity 220ms linear;
+}
+
+/* ---------------- layout arrows (step 4) ---------------- */
+
+.arrow {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+.arrow.is-on { opacity: 1; }
+.arrow.is-headed { marker-end: url(#head-move); }
+
+.stage__svg.is-ready .arrow {
+  transition:
+    stroke-dashoffset var(--dur-link) var(--ease),
+    opacity 220ms linear;
+}
+
+/* ---------------- Document C frame ---------------- */
+
+.doc-c__ghost,
+.doc-c__fill,
+.doc-c__slot { opacity: 0; }
+
+.doc-c__ghost {
+  fill: #fff;
+  fill-opacity: .45;
+  stroke: #4a5561;
+  stroke-width: 2;
+  stroke-dasharray: 9 7;
+}
+
+.doc-c__fill {
+  fill: var(--doc-c);
+  stroke: var(--ink);
+  stroke-width: 2;
+  filter: drop-shadow(0 12px 20px rgba(31, 39, 51, .10));
+}
+
+.doc-c__slot {
+  fill: #fff;
+  fill-opacity: .4;
+  stroke: #6b7480;
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+}
+
+.doc-c__ghost.is-on,
+.doc-c__fill.is-on,
+.doc-c__slot.is-on { opacity: 1; }
+
+.stage__svg.is-ready .doc-c__ghost,
+.stage__svg.is-ready .doc-c__fill,
+.stage__svg.is-ready .doc-c__slot {
+  transition: opacity var(--dur-fade) linear;
+}
+
+/* Hard-off switch used while JS commits the very first layout. */
+.is-instant,
+.is-instant * { transition: none !important; }
+
+/* ---------------- controls ---------------- */
+
+.controls {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: clamp(14px, 2.4vh, 28px);
+}
+
+.controls__btn {
+  appearance: none;
+  border: 1px solid #c9ced6;
+  border-radius: 999px;
+  padding: 9px 18px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 550;
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.controls__btn:hover:not(:disabled) {
+  border-color: #9aa3ae;
+  box-shadow: 0 2px 8px rgba(31, 39, 51, .08);
+}
+
+.controls__btn:active:not(:disabled) { transform: translateY(1px); }
+
+.controls__btn:disabled {
+  opacity: .38;
+  cursor: default;
+}
+
+.controls__btn--primary {
+  min-width: 86px;
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.controls__dots {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 6px;
+}
+
+.controls__hint {
+  display: none;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #8a939e;
+  transition: opacity 300ms linear;
+}
+
+.controls__hint.is-hidden { opacity: 0; }
+
+body.mode-scroll .controls__btn { display: none; }
+body.mode-scroll .controls__hint { display: inline; }
+body.mode-scroll .controls { gap: 14px; }
+
+.controls__dot {
+  width: 11px;
+  height: 11px;
+  padding: 0;
+  border: 1px solid #b4bbc4;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  transition: background 200ms ease, transform 200ms ease;
+}
+
+.controls__dot.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  transform: scale(1.25);
+}
+
+:where(button):focus-visible {
+  outline: 2px solid #2f6fd0;
+  outline-offset: 2px;
+}
+
+/* ---------------- accessibility ---------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .stage__svg {
+    --dur-move: 0ms;
+    --dur-link: 0ms;
+    --dur-fade: 0ms;
+    --dur-frame: 0ms;
+    --dur-cut: 0ms;
+  }
+
+  .caption.is-anim .caption__step,
+  .caption.is-anim .caption__title,
+  .caption.is-anim .caption__desc {
+    animation: none;
+  }
+}
+
+/* ---------------- small screens ---------------- */
+
+/* The diagram is deliberately wide. On phones the SVG would otherwise
+   shrink to unreadable sizes, so let it pan horizontally instead. */
+@media (max-width: 760px) {
+  .scrolly__sticky { padding: 20px 16px 28px; }
+
+  .caption__desc { min-height: 66px; }
+}
