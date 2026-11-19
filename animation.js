@@ -453,7 +453,7 @@
     {
       step: 'Step 1',
       title: 'Two separate documents',
-      desc: `${A_NAME} and ${B_NAME} documents arrive as independent files, each marked into four segments.`
+      desc: `${A_NAME} and ${B_NAME} documents arrive as independent files, each marked into multiple segments.`
     },
     {
       step: 'Step 2',
