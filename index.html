@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Document merge animation — scroll-driven</title>
+  <title>Invoice + Shipment → New Platform</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -20,16 +20,16 @@
     <header class="caption" aria-live="polite">
       <p class="caption__step" id="caption-step">Step 1</p>
       <h1 class="caption__title" id="caption-title">Two separate documents</h1>
-      <p class="caption__desc" id="caption-desc">Document A and Document B arrive as independent files, each marked into four segments.</p>
+      <p class="caption__desc" id="caption-desc">Invoice and Shipment arrive as independent files, each marked into four segments.</p>
     </header>
 
     <div class="stage">
       <svg class="stage__svg" width="560" height="700" viewBox="0 0 560 700"
            role="img" aria-labelledby="svg-title svg-desc">
-        <title id="svg-title">How two documents are merged into Document C</title>
-        <desc id="svg-desc">Animated diagram: documents A and B are split into segments,
+        <title id="svg-title">How New Platform is assembled</title>
+        <desc id="svg-desc">Animated diagram: Invoice and Shipment are split into segments,
           corresponding segments are linked and grouped, and the groups are fitted into
-          Document C.</desc>
+          New Platform.</desc>
 
         <defs>
           <!-- Arrowheads are switched on only after a connector has been drawn. -->
@@ -51,10 +51,10 @@
                   x="112" y="318" width="336" height="308" rx="6"></rect>
             <rect id="doc-c-fill" class="doc-c__fill"
                   x="112" y="318" width="336" height="308" rx="6"></rect>
-            <text id="doc-c-label" class="doc-c__label" x="280" y="672">Document C</text>
+            <text id="doc-c-label" class="doc-c__label" x="280" y="672">New Platform</text>
           </g>
 
-          <!-- Planning slots inside Document C (step 4) -->
+          <!-- Planning slots inside the target document (step 4) -->
           <g id="slots"></g>
 
           <!-- Connectors and arrows are generated in animation.js -->
@@ -75,9 +75,9 @@
 
           <g id="labels">
             <text id="label-a" class="doc-label" x="0" y="0"
-                  style="transform: translate(212px, 430px)">Document A</text>
+                  style="transform: translate(212px, 430px)">Invoice</text>
             <text id="label-b" class="doc-label" x="0" y="0"
-                  style="transform: translate(412px, 430px)">Document B</text>
+                  style="transform: translate(412px, 430px)">Shipment</text>
           </g>
         </g>
       </svg>

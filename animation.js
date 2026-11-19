@@ -53,10 +53,13 @@
 
   const svg = document.querySelector('.stage__svg');
 
-  /* Target document name — "Document C" by default. Change the constant, or
-     open the page with ?target=New%20Platform, to call it something else. */
+  /* Source and target document names. Defaults: Invoice + Shipment → New
+     Platform. Override any of them from the URL, e.g.
+     ?a=Document%20A&b=Document%20B&target=Document%20C */
   const params = new URLSearchParams(window.location.search);
-  const TARGET_NAME = (params.get('target') || 'Document C').trim() || 'Document C';
+  const A_NAME = (params.get('a') || 'Invoice').trim() || 'Invoice';
+  const B_NAME = (params.get('b') || 'Shipment').trim() || 'Shipment';
+  const TARGET_NAME = (params.get('target') || 'New Platform').trim() || 'New Platform';
 
   const readMs = (name, fallback) => {
     const raw = getComputedStyle(svg).getPropertyValue(name).trim();
@@ -450,7 +453,7 @@
     {
       step: 'Step 1',
       title: 'Two separate documents',
-      desc: 'Document A and Document B arrive as independent files, each marked into four segments.'
+      desc: `${A_NAME} and ${B_NAME} arrive as independent files, each marked into four segments.`
     },
     {
       step: 'Step 2',
@@ -460,7 +463,7 @@
     {
       step: 'Step 3',
       title: 'Match and group segments',
-      desc: 'Related segments are linked across the two documents, then grouped into pairs.'
+      desc: `Related segments are linked across ${A_NAME} and ${B_NAME}, then grouped into pairs.`
     },
     {
       step: 'Step 4',
@@ -470,7 +473,7 @@
     {
       step: 'Step 5',
       title: `${TARGET_NAME} is assembled`,
-      desc: `The grouped parts from A and B are fitted into ${TARGET_NAME} and become a single file.`
+      desc: `The grouped parts from ${A_NAME} and ${B_NAME} are fitted into ${TARGET_NAME} and become a single file.`
     }
   ];
 
@@ -638,20 +641,26 @@
     ? Math.min(STEPS.length, Math.max(1, requested)) - 1
     : 0;
 
-  /* Apply the configurable target-document name to the SVG label, captions,
+  /* Apply the configurable document names to the SVG labels, captions,
      accessible title/description and the page title. */
   const docLabel = document.getElementById('doc-c-label');
   if (docLabel) docLabel.textContent = TARGET_NAME;
+
+  const labelA = document.getElementById('label-a');
+  if (labelA) labelA.textContent = A_NAME;
+
+  const labelB = document.getElementById('label-b');
+  if (labelB) labelB.textContent = B_NAME;
 
   const svgTitle = document.getElementById('svg-title');
   const svgDesc = document.getElementById('svg-desc');
   if (svgTitle) svgTitle.textContent = `How ${TARGET_NAME} is assembled`;
   if (svgDesc) {
-    svgDesc.textContent = 'Animated diagram: documents A and B are split into segments, ' +
+    svgDesc.textContent = `Animated diagram: ${A_NAME} and ${B_NAME} are split into segments, ` +
       'corresponding segments are linked and grouped, and the groups are fitted into ' +
       `${TARGET_NAME}.`;
   }
-  document.title = `${TARGET_NAME} — document merge animation`;
+  document.title = `${A_NAME} + ${B_NAME} → ${TARGET_NAME}`;
 
   if (scrollMode) {
     history.scrollRestoration = 'manual';

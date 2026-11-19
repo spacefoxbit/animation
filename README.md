@@ -1,16 +1,17 @@
-# Documents A + B → Document C — vector step animation
+# Invoice + Shipment → New Platform — vector step animation
 
-A dependency-free, five-step animated explainer: two documents are split into
-segments, matching segments are linked and grouped, the layout is planned, and
-the groups are fitted into a new Document C.
+A dependency-free, five-step animated explainer: two documents (Invoice and
+Shipment by default) are split into segments, matching segments are linked and
+grouped, the layout is planned, and the groups are fitted into a new document
+(New Platform by default).
 
 By default the page is **scroll-driven**: the animation is pinned (sticky) and
 scrolling through a tall track plays the five steps in order. Add
 `?mode=widget` for the fixed step player with Prev / Next / Play.
 
-The target document is called **Document C** by default; open the page with
-`?target=New%20Platform` (or change `TARGET_NAME`) to relabel it as
-“New Platform” everywhere.
+The documents are named **Invoice**, **Shipment** and **New Platform** by
+default. Override any of them from the URL — `?a=Document%20A&b=Document%20B&target=Document%20C`
+restores the generic names, for example.
 
 The canvas is deliberately compact and near-square (560 × 700 user units), so a
 phone shows the whole animation at once — no sideways panning, every step
@@ -34,12 +35,12 @@ Open `index.html` directly, or serve the folder (e.g. `npx serve .`).
 | 0 | Two separate documents | two intact document sheets; three dotted cuts sweep across each and stay as the split marks |
 | 1 | Split into segments | the sheets fade into their four segments, which fan apart |
 | 2 | Match and group segments | curved links draw A → B, the light segments slide onto their partners, dashed group outlines appear |
-| 3 | Plan the new layout | groups stack above a ghosted Document C; four curved connectors link each group to its slot |
-| 4 | Document C is assembled | groups drop into the slots, the target document fills in |
+| 3 | Plan the new layout | groups stack above a ghosted target document; four curved connectors link each group to its slot |
+| 4 | Target document is assembled | groups drop into the slots, the target document fills in |
 
 Deep link to any step: `index.html?step=4` (in scroll mode the page scrolls to
-that step on load). Combine with the target name:
-`index.html?target=New%20Platform&step=5`.
+that step on load). Combine with custom names:
+`index.html?a=Document%20A&b=Document%20B&target=Document%20C&step=5`.
 
 ## Scroll mode (default)
 
@@ -116,11 +117,12 @@ designer wants to author the motion in After Effects, a Lottie export
 
 ## Customising
 
-- Geometry (columns, rows, Document C frame, slot positions) and the pairing
+- Geometry (columns, rows, target-document frame, slot positions) and the pairing
   order `MAP` are constants at the top of `animation.js`.
-- The target document name is `TARGET_NAME` (`animation.js`), overridable with
-  `?target=New%20Platform`. It is used for the label under the document, the
-  Step 4/5 captions, the SVG `<title>`/`<desc>` and the browser title.
+- Document names are `A_NAME`, `B_NAME` and `TARGET_NAME` (`animation.js`),
+  overridable with `?a=`, `?b=` and `?target=`. They feed the labels under the
+  documents, the Step 1/3/5 captions, the SVG `<title>`/`<desc>` and the browser
+  title.
 - Colours, easing and durations are custom properties at the top of
   `styles.css` (`--seg-a` dark gray, `--seg-b` light gray, `--doc-c` off-white,
   `--ease`, `--dur-*`).
@@ -132,8 +134,8 @@ designer wants to author the motion in After Effects, a Lottie export
 - Autoplay cadence: `STEP_MS` in `animation.js`.
 - Copy (step titles/descriptions): the `STEPS` array in `animation.js`.
 
-`MAP` must stay a permutation of `0..COUNT-1` without fixed points (each
-Document A segment pairs with a Document B one, and the links cross).
+`MAP` must stay a permutation of `0..COUNT-1` without fixed points (each source
+segment pairs with one from the other document, and the links cross).
 
 ## Using it in a website
 
@@ -142,7 +144,7 @@ Document A segment pairs with a Document B one, and the links cross).
    `.demo` block (it needs a scrollable document); for the fixed widget copy
    just `<main class="demo">…</main>`. All styles are scoped under those classes,
    so they will not leak into your site.
-2. Or embed it untouched: `<iframe src="/path/to/index.html?target=New%20Platform" title="How the new document is assembled" style="width:100%;border:0;aspect-ratio:560/700"></iframe>`
+2. Or embed it untouched: `<iframe src="/path/to/index.html?a=Document%20A&b=Document%20B&target=Document%20C" title="How the new document is assembled" style="width:100%;border:0;aspect-ratio:560/700"></iframe>`
    (drop `aspect-ratio` for the scroll version and give the iframe a height).
 3. Control it from the host page:
 
