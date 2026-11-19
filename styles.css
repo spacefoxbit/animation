@@ -278,6 +278,10 @@ body.mode-scroll .scrolly__progress { opacity: 1; }
 
 .pair-frame.is-on { opacity: 1; }
 
+/* Arrowheads follow the palette tokens. */
+#head-link path { fill: var(--seg-a); }
+#head-move path { fill: var(--ink); }
+
 /* ---------------- connectors (step 3) ---------------- */
 
 .link {
