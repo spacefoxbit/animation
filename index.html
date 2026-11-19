@@ -3,12 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>How Document C is assembled — step animation</title>
+  <title>Document merge animation — scroll-driven</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="scrolly" id="scrolly">
     <div class="scrolly__sticky">
+      <div class="scrolly__progress" aria-hidden="true">
+        <span id="scroll-progress"></span>
+      </div>
       <main class="demo">
     <header class="caption" aria-live="polite">
       <p class="caption__step" id="caption-step">Step 1</p>

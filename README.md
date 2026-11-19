@@ -8,6 +8,10 @@ By default the page is **scroll-driven**: the animation is pinned (sticky) and
 scrolling through a tall track plays the five steps in order. Add
 `?mode=widget` for the fixed step player with Prev / Next / Play.
 
+The target document is called **Document C** by default; open the page with
+`?target=New%20Platform` (or change `TARGET_NAME`) to relabel it as
+“New Platform” everywhere.
+
 The canvas is deliberately compact and near-square (560 × 700 user units), so a
 phone shows the whole animation at once — no sideways panning, every step
 centred.
@@ -31,15 +35,16 @@ Open `index.html` directly, or serve the folder (e.g. `npx serve .`).
 | 1 | Split into segments | the sheets fade into their four segments, which fan apart |
 | 2 | Match and group segments | curved links draw A → B, the light segments slide onto their partners, dashed group outlines appear |
 | 3 | Plan the new layout | groups stack above a ghosted Document C; four curved connectors link each group to its slot |
-| 4 | Document C is assembled | groups drop into the slots, Document C fills in |
+| 4 | Document C is assembled | groups drop into the slots, the target document fills in |
 
 Deep link to any step: `index.html?step=4` (in scroll mode the page scrolls to
-that step on load).
+that step on load). Combine with the target name:
+`index.html?target=New%20Platform&step=5`.
 
 ## Scroll mode (default)
 
 ```
-.scrolly        tall track — 5.2 viewports, so each step gets ~84vh of scroll
+.scrolly        tall track — 6.2 viewports, so each step gets ~104vh of scroll
   .scrolly__sticky   position: sticky; 100svh — the animation stays in view
     .demo           caption + SVG stage + progress dots
 ```
@@ -48,10 +53,14 @@ that step on load).
   the five stages with a small hysteresis band, so a step fires when its section
   is reached and plays its normal CSS choreography.
 - The caption and the dots update per step; the “Scroll to play” hint fades as
-  soon as you scroll. Clicking a dot (or pressing ← / →) scrolls to that step.
+  soon as you scroll, and the thin bar at the top of the pinned viewport tracks
+  raw scroll progress continuously.
+- Step animations are deliberately short (700 ms moves, ~1.4–2.3 s per step) so
+  they finish before the next section boundary at normal scrolling speed.
+- Clicking a dot (or pressing ← / →) scrolls smoothly to that step.
 - `?step=N` works in scroll mode too — it positions the page at that step.
 - `?mode=widget` keeps the one-screen version with Prev / Next / Play.
-- Scroll length is one CSS value: `body.mode-scroll .scrolly { height: 520svh }`
+- Scroll length is one CSS value: `body.mode-scroll .scrolly { height: 620svh }`
   in `styles.css`. The step mapping is in `stageFromScroll()` (`animation.js`).
 
 This is *step-triggered* playback: crossing a section boundary plays that step’s
@@ -109,6 +118,9 @@ designer wants to author the motion in After Effects, a Lottie export
 
 - Geometry (columns, rows, Document C frame, slot positions) and the pairing
   order `MAP` are constants at the top of `animation.js`.
+- The target document name is `TARGET_NAME` (`animation.js`), overridable with
+  `?target=New%20Platform`. It is used for the label under the document, the
+  Step 4/5 captions, the SVG `<title>`/`<desc>` and the browser title.
 - Colours, easing and durations are custom properties at the top of
   `styles.css` (`--seg-a` dark gray, `--seg-b` light gray, `--doc-c` off-white,
   `--ease`, `--dur-*`).
@@ -130,7 +142,7 @@ Document A segment pairs with a Document B one, and the links cross).
    `.demo` block (it needs a scrollable document); for the fixed widget copy
    just `<main class="demo">…</main>`. All styles are scoped under those classes,
    so they will not leak into your site.
-2. Or embed it untouched: `<iframe src="/path/to/index.html" title="How Document C is assembled" style="width:100%;border:0;aspect-ratio:560/700"></iframe>`
+2. Or embed it untouched: `<iframe src="/path/to/index.html?target=New%20Platform" title="How the new document is assembled" style="width:100%;border:0;aspect-ratio:560/700"></iframe>`
    (drop `aspect-ratio` for the scroll version and give the iframe a height).
 3. Control it from the host page:
 

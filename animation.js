@@ -53,6 +53,11 @@
 
   const svg = document.querySelector('.stage__svg');
 
+  /* Target document name — "Document C" by default. Change the constant, or
+     open the page with ?target=New%20Platform, to call it something else. */
+  const params = new URLSearchParams(window.location.search);
+  const TARGET_NAME = (params.get('target') || 'Document C').trim() || 'Document C';
+
   const readMs = (name, fallback) => {
     const raw = getComputedStyle(svg).getPropertyValue(name).trim();
     if (!raw) return fallback;
@@ -68,14 +73,14 @@
     frame: readMs('--dur-frame', 500)
   };
 
-  const LINK_START = 120;
-  const LINK_STAGGER = 120;
+  const LINK_START = 100;
+  const LINK_STAGGER = 100;
   const LINKS_DONE = LINK_START + T.link + (COUNT - 1) * LINK_STAGGER;
-  const GREEN_START = LINKS_DONE + 80;   // greens travel after the links are drawn
-  const GREEN_STAGGER = 130;
-  const ARROW_START = 1150;
-  const ARROW_STAGGER = 120;
-  const STEP_MS = 3200;                  // autoplay cadence
+  const GREEN_START = LINKS_DONE + 60;   // greens travel after the links are drawn
+  const GREEN_STAGGER = 110;
+  const ARROW_START = 1000;
+  const ARROW_STAGGER = 90;
+  const STEP_MS = 3000;                  // autoplay cadence
 
   /* ---------------- helpers ---------------- */
 
@@ -460,12 +465,12 @@
     {
       step: 'Step 4',
       title: 'Plan the new layout',
-      desc: 'The groups are arranged in the order they will take inside the new document.'
+      desc: `The groups are arranged in the order they will take inside ${TARGET_NAME}.`
     },
     {
       step: 'Step 5',
-      title: 'Document C is assembled',
-      desc: 'The grouped parts from A and B are fitted into Document C and become a single file.'
+      title: `${TARGET_NAME} is assembled`,
+      desc: `The grouped parts from A and B are fitted into ${TARGET_NAME} and become a single file.`
     }
   ];
 
@@ -480,11 +485,11 @@
 
   /* ---------------- scroll-driven mode ---------------- */
 
-  const params = new URLSearchParams(window.location.search);
   const scrollMode = params.get('mode') !== 'widget';
   const track = document.getElementById('scrolly');
   const sticky = document.querySelector('.scrolly__sticky');
   const scrollHint = document.getElementById('scroll-hint');
+  const progressBar = document.getElementById('scroll-progress');
 
   document.body.classList.toggle('mode-scroll', scrollMode);
 
@@ -493,11 +498,12 @@
 
   const scrollRange = () => Math.max(1, track.offsetHeight - sticky.offsetHeight);
 
+  const currentProgress = () => Math.min(1, Math.max(0, -track.getBoundingClientRect().top / scrollRange()));
+
   /* Map scroll progress (0–1) to a step, with a small hysteresis band so the
      stage does not flicker at a boundary. */
   const stageFromScroll = () => {
-    const progress = Math.min(1, Math.max(0, -track.getBoundingClientRect().top / scrollRange()));
-    const raw = progress * STEPS.length;
+    const raw = currentProgress() * STEPS.length;
     let stage = state.stage;
     while (stage < STEPS.length - 1 && raw >= stage + 1 + 0.02) stage += 1;
     while (stage > 0 && raw < stage - 0.02) stage -= 1;
@@ -512,11 +518,11 @@
 
   const syncFromScroll = () => {
     if (!scrollMode || !scrollEnabled) return;
+    const progress = currentProgress();
+    if (progressBar) progressBar.style.transform = `scaleX(${progress})`;
     const stage = stageFromScroll();
     if (stage !== state.stage) goTo(stage);
-    if (scrollHint) {
-      scrollHint.classList.toggle('is-hidden', -track.getBoundingClientRect().top > 6);
-    }
+    if (scrollHint) scrollHint.classList.toggle('is-hidden', progress > 0.006);
   };
 
   function updateUI(stage, animateCaption = true) {
@@ -624,6 +630,21 @@
   const startStage = Number.isInteger(requested)
     ? Math.min(STEPS.length, Math.max(1, requested)) - 1
     : 0;
+
+  /* Apply the configurable target-document name to the SVG label, captions,
+     accessible title/description and the page title. */
+  const docLabel = document.getElementById('doc-c-label');
+  if (docLabel) docLabel.textContent = TARGET_NAME;
+
+  const svgTitle = document.getElementById('svg-title');
+  const svgDesc = document.getElementById('svg-desc');
+  if (svgTitle) svgTitle.textContent = `How ${TARGET_NAME} is assembled`;
+  if (svgDesc) {
+    svgDesc.textContent = 'Animated diagram: documents A and B are split into segments, ' +
+      'corresponding segments are linked and grouped, and the groups are fitted into ' +
+      `${TARGET_NAME}.`;
+  }
+  document.title = `${TARGET_NAME} — document merge animation`;
 
   if (scrollMode) {
     history.scrollRestoration = 'manual';
