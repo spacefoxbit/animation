@@ -489,7 +489,7 @@
   const track = document.getElementById('scrolly');
   const sticky = document.querySelector('.scrolly__sticky');
   const scrollHint = document.getElementById('scroll-hint');
-  const progressBar = document.getElementById('scroll-progress');
+  const progressSegments = Array.from(document.querySelectorAll('.scrolly__progress span'));
 
   document.body.classList.toggle('mode-scroll', scrollMode);
 
@@ -519,7 +519,14 @@
   const syncFromScroll = () => {
     if (!scrollMode || !scrollEnabled) return;
     const progress = currentProgress();
-    if (progressBar) progressBar.style.transform = `scaleX(${progress})`;
+
+    /* Fill the five segments one after another as the scroll advances. */
+    const scaled = progress * progressSegments.length;
+    progressSegments.forEach((segment, index) => {
+      const fill = Math.min(1, Math.max(0, scaled - index));
+      segment.style.setProperty('--fill', fill.toFixed(3));
+    });
+
     const stage = stageFromScroll();
     if (stage !== state.stage) goTo(stage);
     if (scrollHint) scrollHint.classList.toggle('is-hidden', progress > 0.006);

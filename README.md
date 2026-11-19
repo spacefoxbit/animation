@@ -52,9 +52,9 @@ that step on load). Combine with the target name:
 - `body.mode-scroll` stretches the track; scroll progress (0–1) is mapped across
   the five stages with a small hysteresis band, so a step fires when its section
   is reached and plays its normal CSS choreography.
-- The caption and the dots update per step; the “Scroll to play” hint fades as
-  soon as you scroll, and the thin bar at the top of the pinned viewport tracks
-  raw scroll progress continuously.
+- The caption and the dots update per step; the “Scroll to play” hint sits above
+  the centred dots and fades as soon as you scroll, while the five-segment rail
+  at the top of the pinned viewport fills one step at a time.
 - Step animations are deliberately short (700 ms moves, ~1.4–2.3 s per step) so
   they finish before the next section boundary at normal scrolling speed.
 - Clicking a dot (or pressing ← / →) scrolls smoothly to that step.
