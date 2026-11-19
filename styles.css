@@ -5,7 +5,7 @@
    ========================================================= */
 
 :root {
-  --seg-a: #4a4f57;        /* Document A — dark gray */
+  --seg-a: #a70000;        /* Invoice — deep red */
   --seg-b: #d5d8dc;        /* Document B — light gray */
   --doc-c: #f7f4ec;        /* Document C — off-white */
   --ink: #1f2733;

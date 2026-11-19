@@ -124,7 +124,8 @@ designer wants to author the motion in After Effects, a Lottie export
   documents, the Step 1/3/5 captions, the SVG `<title>`/`<desc>` and the browser
   title.
 - Colours, easing and durations are custom properties at the top of
-  `styles.css` (`--seg-a` dark gray, `--seg-b` light gray, `--doc-c` off-white,
+  `styles.css` (`--seg-a` Invoice red `#a70000`, `--seg-b` Shipment light gray,
+  `--doc-c` target off-white,
   `--ease`, `--dur-*`).
 - Per-step framing lives in `CAMERA` (`animation.js`) — an `{x, y}` nudge of the
   whole scene so each step’s content stays centred in the canvas.
