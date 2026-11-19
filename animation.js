@@ -51,7 +51,7 @@
 
   /* ---------------- timing (single source: styles.css) ---------------- */
 
-  const svg = document.querySelector('.stage__svg');
+  const svg = /** @type {SVGSVGElement} */ (document.querySelector('.stage__svg'));
 
   /* Source and target document names. Defaults: Invoice + Shipment → New
      Platform. Override any of them from the URL, e.g.
@@ -477,22 +477,24 @@
     }
   ];
 
-  const caption = document.querySelector('.caption');
+  const caption = /** @type {HTMLElement} */ (document.querySelector('.caption'));
   const captionStep = document.getElementById('caption-step');
   const captionTitle = document.getElementById('caption-title');
   const captionDesc = document.getElementById('caption-desc');
   const dots = Array.from(document.querySelectorAll('[data-dot]'));
-  const prevBtn = document.getElementById('btn-prev');
-  const nextBtn = document.getElementById('btn-next');
-  const playBtn = document.getElementById('btn-play');
+  const prevBtn = /** @type {HTMLButtonElement} */ (document.getElementById('btn-prev'));
+  const nextBtn = /** @type {HTMLButtonElement} */ (document.getElementById('btn-next'));
+  const playBtn = /** @type {HTMLButtonElement} */ (document.getElementById('btn-play'));
 
   /* ---------------- scroll-driven mode ---------------- */
 
   const scrollMode = params.get('mode') !== 'widget';
-  const track = document.getElementById('scrolly');
-  const sticky = document.querySelector('.scrolly__sticky');
+  const track = /** @type {HTMLElement} */ (document.getElementById('scrolly'));
+  const sticky = /** @type {HTMLElement} */ (document.querySelector('.scrolly__sticky'));
   const scrollHint = document.getElementById('scroll-hint');
-  const progressSegments = Array.from(document.querySelectorAll('.scrolly__progress span'));
+  const progressSegments = /** @type {HTMLElement[]} */ (
+    Array.from(document.querySelectorAll('.scrolly__progress span'))
+  );
 
   document.body.classList.toggle('mode-scroll', scrollMode);
 
@@ -622,7 +624,7 @@
   });
 
   /* Small public API — handy when the animation is embedded in a page. */
-  window.documentMerge = {
+  (/** @type {any} */ (window)).documentMerge = {
     showStep(stepNumber) {
       const stage = Math.min(STEPS.length - 1, Math.max(0, Number(stepNumber) - 1));
       if (Number.isNaN(stage)) return;
